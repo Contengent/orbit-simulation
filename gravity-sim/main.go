@@ -13,15 +13,20 @@ import (
 	_ "image/png"
 	"log"
 	"math"
+	"strconv"
 
 	// ebiten packages
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	_ "github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 type Game struct{}
 
 var img *ebiten.Image
+
+var planetInformation string = ""
 
 var colors map[string]color.RGBA = map[string]color.RGBA{
 	"black": {0, 0, 0, 0xff},
@@ -32,18 +37,14 @@ var colors map[string]color.RGBA = map[string]color.RGBA{
 
 var planet ballObject = ballObject{
 	shape:    shape{10, 10, colors["white"]},
-	position: position{0, 160, 2, 0},
+	position: position{80, 180, 10, 0},
 	creation: creation{nil, nil},
 }
 
 var blackHole ballObject = ballObject{
 	shape:    shape{20, 20, colors["blue"]},
-	position: position{140, 100, 0, 0},
+	position: position{180, 140, 0, 0},
 	creation: creation{nil, nil},
-}
-
-func init() {
-
 }
 
 func (g *Game) Update() error {
@@ -70,10 +71,19 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	planet.gravityCalculation(blackHole)
 	planet.velocityCalculation()
 
+	x, y := ebiten.CursorPosition()
+
+	planetInformation =
+		"Position: (" + strconv.FormatFloat(planet.position.xpos, 'f', 0, 64) + ", " + strconv.FormatFloat(planet.position.ypos, 'f', 0, 64) + ")" + "\n" +
+			"Velocity: (" + strconv.FormatFloat(planet.position.xvelocity, 'f', 2, 64) + ", " + strconv.FormatFloat(planet.position.yvelocity, 'f', 2, 64) + ")" + "\n" +
+			"MousePos: (" + strconv.Itoa(x) + ", " + strconv.Itoa(y) + ")"
+
+	planet.movePlanetToMouse()
+
 	screen.DrawImage(planet.creation.image, planet.creation.options)
 	screen.DrawImage(blackHole.creation.image, blackHole.creation.options)
 
-	// ebitenutil.DebugPrint(screen, "walao")
+	ebitenutil.DebugPrint(screen, planetInformation)
 
 }
 
@@ -140,13 +150,10 @@ func (planet *ballObject) gravityCalculation(blackhole ballObject) {
 	planet.position.yvelocity += ycomponent
 }
 
-/*
-func normalizeVector(xcomponent float64, ycomponent float64) (float64, float64) {
-	vectorDistance := math.Sqrt(math.Pow(xcomponent, 2) + math.Pow(ycomponent, 2))
-
-	xcomponent /= vectorDistance
-	ycomponent /= vectorDistance
-
-	return xcomponent, ycomponent
+func (planet *ballObject) movePlanetToMouse() {
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButton0) {
+		x, y := ebiten.CursorPosition()
+		planet.position.xpos, planet.position.ypos = float64(x), float64(y)
+		planet.position.xvelocity, planet.position.yvelocity = 0, 0
+	}
 }
-*/
