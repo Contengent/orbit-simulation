@@ -69,6 +69,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	planet.ballCreation()
 	blackHole.ballCreation()
 	planet.gravityCalculation(blackHole)
+	planet.changeVelocity()
 	planet.velocityCalculation()
 
 	x, y := ebiten.CursorPosition()
@@ -155,5 +156,17 @@ func (planet *ballObject) movePlanetToMouse() {
 		x, y := ebiten.CursorPosition()
 		planet.position.xpos, planet.position.ypos = float64(x), float64(y)
 		planet.position.xvelocity, planet.position.yvelocity = 0, 0
+	}
+}
+
+func (planet *ballObject) changeVelocity() {
+	if ebiten.IsKeyPressed(ebiten.KeyEqual) {
+		planet.position.xvelocity += 1
+	} else if ebiten.IsKeyPressed(ebiten.KeyEqual) {
+		planet.position.xvelocity -= 1
+	} else if ebiten.IsKeyPressed(ebiten.KeyO) {
+		planet.position.yvelocity += 1
+	} else if ebiten.IsKeyPressed(ebiten.KeyP) {
+		planet.position.yvelocity -= 1
 	}
 }
