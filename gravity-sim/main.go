@@ -162,7 +162,7 @@ func (planet *ballObject) movePlanetToMouse() {
 func (planet *ballObject) changeVelocity() {
 	if ebiten.IsKeyPressed(ebiten.KeyEqual) {
 		planet.position.xvelocity += 1
-	} else if ebiten.IsKeyPressed(ebiten.KeyEqual) {
+	} else if ebiten.IsKeyPressed(ebiten.KeyMinus) {
 		planet.position.xvelocity -= 1
 	} else if ebiten.IsKeyPressed(ebiten.KeyO) {
 		planet.position.yvelocity += 1
